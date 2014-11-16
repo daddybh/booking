@@ -1,0 +1,7 @@
+{
+	"name": "红盾网上预约",
+	"version": "1.0",
+	"description": "",
+	"browser_action": {"default_icon": "icon.png"},
+	"permissions": ["http://121.8.226.146/"]
+}

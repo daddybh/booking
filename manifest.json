@@ -7,11 +7,17 @@
 		"default_icon": "icon.png",
 		"default_popup": "popup.html"
 	},
-	content_scripts:[
+	"content_scripts":[
 		{
 			"matches":["http://121.8.226.146/WSYY_WEB/webUI/one.aspx"],
-			"js":["pageOne.js"]
+			"js":["jquery-1.11.1.min.js","pageOne.js"]
+		},{
+			"matches":["http://121.8.226.146/WSYY_WEB/webUI/two.aspx"],
+			"js":["jquery-1.11.1.min.js","pageTwo.js"]
+		},{
+			"matches":["http://121.8.226.146/WSYY_WEB/webUI/three.aspx"],
+			"js":["jquery-1.11.1.min.js","pageThree.js"]
 		}
 	],
-	"permissions": ["tabs","http://121.8.226.146/"]
+	"permissions": ["tabs","http://*/*"]
 }

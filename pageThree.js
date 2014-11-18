@@ -22,10 +22,12 @@ function initThirdPage(){
 		}
 		ajax = $.post("three.aspx",{"type":"getyysd","yytime":GlobalVar.Date,"depart":$("#depart").val(),"busId": busType},
 				function(data,textStatus){
+					console.log(data);
 					if(data.length <=0){
 						timer = setTimeout(getRegistTime, 20);
 					}else{
 						$.each(data, function(i, item){
+							console.log(item);
 							if(item.syNum > 0){
 								submitRequest(item.ID);
 								return;

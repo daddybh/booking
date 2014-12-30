@@ -10,7 +10,6 @@ function initPage(){
 function initPageElement(){
 	chrome.storage.local.get("settings", function(result){
 		var settings = result.settings;
-		$("#yytime").val(settings.yytime);
 		$("#name").val(settings.name);
 		$("#idCode").val(settings.idCode);
 		$("#mobile").val(settings.mobile);
@@ -20,7 +19,6 @@ function initPageElement(){
 
 function saveSetting(){
 	var settings = {
-		"yytime":$("#yytime").val(),
 		"name":$("#name").val(),
 		"idCode":$("#idCode").val(),
 		"mobile":$("#mobile").val(),

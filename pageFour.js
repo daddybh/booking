@@ -1,9 +1,19 @@
-
+var settings = {};
 $(document).ready(function(){
-	$("#checkCode").ready(function(){
-		checkCode();
+	chrome.storage.local.get("settings", function(result){
+		settings = result.settings;
+
+		$("#checkCode").ready(function(){
+			checkCode();
+		});
 	});
 });
+
+function reloadCode(){
+
+	$("#checkCode").attr("src", "ValidateCode.aspx?" + Math.random());
+
+}
 /**
  * 提交验证码
  * @return {[type]} [description]
@@ -12,17 +22,19 @@ function checkCode(){
     $("#shadowDiv").show();
     $("#divhide").show();
 
-	console.log("获取验证码...");
+	showMsg("获取验证码...");
 	var code = getCookie('CheckCode');
-	console.log("验证码:"+code);
-	console.log("提交验证码...");
-	$.post("four.aspx", { type: "checkCode", "checkCode": code }, function(data){
+	showMsg("验证码:"+code);
+	showMsg("提交验证码...");
+	$.post("four.aspx", { type: "checkCode", checkCode: code }, function(data){
 		if(data.isError){
-			console.log("重现加载验证码...");
-			$("#checkCode").ready(checkCode).click();
+			showMsg("重现加载验证码...");
+			reloadCode();
 		}else{
 			submitFouthSteps();
 		}
+	},"json").fail(function(){
+		showMsg("验证码ajax出错");
 	});
 }
 
@@ -34,16 +46,25 @@ function getCookie(name) {
 
 
 function submitFouthSteps(){
-	$.post("four.aspx", {"type":"yuyue","name": "陈金花", "idCode": "441481198605120021", "mobile": "18302039757", "email": "370862573@qq.com"},
+	$.post("four.aspx", {"type":"yuyue","name": settings.name, "idCode": settings.idCode, "mobile": settings.mobile, "email": settings.email},
 			function(data,textStatus){
 			   if (data.isError) {
-		 			console.log("出错重来："+data.message);
+		 			showMsg("出错重来："+data.message);
 		 			//location.href="three.aspx";
 		 			//initThirdPage();
-		 			$("#checkCode").ready(checkCode).click();
+		 			checkCode();
                 } else {
-                	console.log("跳转到预约成功页面...")
+                	showMsg("跳转到预约成功页面...");
                     location.href = data.url;
                 }
-			},"json");
+			},"json").fail(function(){
+				showMsg("ajax请求失败，再来过...");
+				checkCode();
+	 			//$("#checkCode").ready(checkCode).click();
+			}, "json");
+}
+
+
+function showMsg(msg){
+	console.log(msg);
 }

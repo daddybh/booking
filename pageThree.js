@@ -1,17 +1,15 @@
-var busType = "7d250afa-8894-4ca6-8f88-d1a0132baf02";//业务类型:工商受理（设立/变更/注销/换照）
-var departID = "dd2fa48d-39b7-4b21-93f0-3b4f5cb27c92";//部门名称:白云工商分局
-var Accept = "BY001";//办事大厅:白云--政务中心大厅
-var yytime = "2015-01-06";//预约时间:
-/*chrome.extension.sendMessage({start: "pageThree"}, function(response) {
-  	initThirdPage();
-});*/
-
-initThirdPage();
-//checkCode();
+var busType = "";//业务类型:工商受理（设立/变更/注销/换照）
+var departID = "";//部门名称:白云工商分局
+var Accept = "";//办事大厅:白云--政务中心大厅
+var yytime = "";//预约时间:
+var top = 30, index=1;
+$(document).ready(function(){
+	initEvts();
+});
 
 function initThirdPage(){
 
-	/*var timer;
+	var timer;
 	var ajax, hasSy = false;
 
 	function getRegistTime(){
@@ -25,40 +23,74 @@ function initThirdPage(){
 				function(data,textStatus, xhr){
 					ajax = xhr;
 					if(data.length <=0){
-						console.log("无预约时间列表，重新获取一下...");
+						showMsg("无预约时间列表，重新获取一下...");
 						timer = setTimeout(getRegistTime, 20);
 					}else{
 						$.each(data, function(i, item){
 							if(item.syNum > 0){
 								hasSy = true;
-								console.log("开始提交...");
-								console.log("时间段:"+item.yyId);
+								showMsg("开始提交...");
+								showMsg("时间段:"+item.yyId);
 								submitRequest(item.ID);
 								return false;
 							}
 						});
 						if(!hasSy){
-							console.log("无剩余预约数,重新来...");
+							yytime = addDate();
+							showMsg("无剩余预约数,重新来，查询："+yytime);
 							timer = setTimeout(getRegistTime, 500);
 						}
 					}
 				},"json");
 	}
 
-	timer = setTimeout(getRegistTime, 0);*/
-	submitRequest("540207AF-68F0-472E-B9BC-4235221B5A6E");
+	timer = setTimeout(getRegistTime, 0);
+}
+
+function initVariable(){
+	yytime = $("#yyTime").val();
+	departID = $("#depart").val();
+	Accept = $("#Accept").val();
+	busType = $("#busType").val();
+}
+
+function addDate(){
+	var d = new Date(yytime);
+	var m = moment(d);
+	m = m.add(index,'d');
+	if(m.day() === 0 || m.day() === 6){
+		index++;
+		return addDate();
+	}
+	return m.format("YYYY-MM-DD");
+}
+
+function initEvts(){
+	var btn = $("<button id=\"next\" >预约</button>").bind("click", function(){
+		initVariable();
+		initThirdPage();
+	});
+	btn.insertAfter($("#next"));
 }
 
 function submitRequest(ID){
-	$.post("three.aspx",{"type":"nextstop","PlanId": ID, "AcceptId": Accept},
+	var params = {"type":"nextstop","PlanId": ID};
+	if(Accept && Accept !== ""){
+		params.AcceptId = Accept;
+	}
+	$.post("three.aspx",params,
 	 	function(data){
 	 		if(data.isError){
-	 			console.log("出错重来："+data.message);
+	 			showMsg("出错重来："+data.message);
 	 			initThirdPage();
 	 		}else{
 	 			location.href= data.url;
-	 			console.log("提交预约...");
+	 			showMsg("提交预约...");
 	 			//checkCode();
 	 		}
 	 	},"json")
+}
+
+function showMsg(msg){
+	console.log(msg);
 }
